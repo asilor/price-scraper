@@ -36,5 +36,12 @@ class ProxyRotator:
 def get_proxies() -> list[str]:
     """Return the list of proxies."""
 
+    proxies = []
+
     with open("proxies.txt", "r") as file:
-        return [line.strip() for line in file]
+        for line in file:
+            ip, port, username, password = line.strip().split(":")
+            proxy = f"http://{username}:{password}@{ip}:{port}"
+            proxies.append(proxy)
+
+    return proxies
