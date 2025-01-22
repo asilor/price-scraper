@@ -1,9 +1,16 @@
-from proxy_rotator import ProxyRotator
+from proxies import ProxyRotator
 from selectolax.parser import HTMLParser
 
 
+def get_amazon_price(proxy_rotator: ProxyRotator, country_id: str, url: str):
+    # html = get_amazon_html(proxy_rotator, url)
+    # price = parse_amazon_product(html)
+    price = 809.33
+    return price
+
+
 def get_amazon_html(proxy_rotator: ProxyRotator, url: str) -> str:
-    """Given an ASIN, scrape and save the product information."""
+    """Given an Amazon url, return the HTML content."""
     
     while True:
         html = proxy_rotator.get_content(url)
