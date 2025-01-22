@@ -1,14 +1,12 @@
-FROM python:slim
+FROM python:alpine
 
 WORKDIR /app
-
-RUN apt update && apt -y install cron
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-COPY crontab /etc/cron.d/crontab
+RUN crontab crontab
 
-CMD ["cron", "-f"]
+CMD ["crond", "-f"]
