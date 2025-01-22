@@ -2,14 +2,10 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, UTC
 from dotenv import load_dotenv
 from bson.objectid import ObjectId
-from db import Database, iterate_collection
+from database import get_database, iterate_collection
 from proxies import ProxyRotator, get_proxies
 from retailers.amazon import get_amazon_price
 from retailers.tradeinn import get_tradeinn_price
-
-
-AMAZON_ID = "678fe61421cc010007e27780"
-TRADEINN_ID = "67900fe721cc010007e27784"
 
 
 def process_product(db, proxy_rotator, product):
@@ -17,6 +13,9 @@ def process_product(db, proxy_rotator, product):
     retailer_id = str(product["retailer_id"])
     country_id = str(product["country_id"])
     url = product["url"]
+
+    AMAZON_ID = "678fe61421cc010007e27780"
+    TRADEINN_ID = "67900fe721cc010007e27784"
 
     if retailer_id == AMAZON_ID:
         price = get_amazon_price(proxy_rotator, country_id, url)
@@ -33,15 +32,14 @@ def process_product(db, proxy_rotator, product):
         "time_checked": datetime.now(UTC)
     }
 
-    prices_collection = db.db["prices"]
+    prices_collection = db["prices"]
     prices_collection.insert_one(price_document)
 
 
 def main() -> None:
     load_dotenv()
 
-    db = Database()
-
+    db = get_database()
     proxies = get_proxies()
     proxy_rotator = ProxyRotator(proxies)
 
