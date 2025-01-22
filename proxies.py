@@ -1,4 +1,5 @@
 from curl_cffi import requests
+import os
 
 
 class ProxyRotator:
@@ -38,7 +39,8 @@ def get_proxies() -> list[str]:
 
     proxies = []
 
-    with open("proxies.txt", "r") as file:
+    file_path = os.path.join(os.path.dirname(__file__), "proxies.txt")
+    with open(file_path, "r") as file:
         for line in file:
             ip, port, username, password = line.strip().split(":")
             proxy = f"http://{username}:{password}@{ip}:{port}"
