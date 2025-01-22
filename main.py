@@ -3,9 +3,28 @@ from db import Database, iterate_collection
 from proxies import ProxyRotator, get_proxies
 from amazon import get_amazon_price
 from tradeinn import get_tradeinn_price
+from datetime import datetime, UTC
+from bson.objectid import ObjectId
+
 
 AMAZON_ID = "678fe61421cc010007e27780"
 TRADEINN_ID = "67900fe721cc010007e27784"
+
+
+def store_price(db, product_id: str, region_id: str, retailer_id: str, price: float):
+    """Store the price in the database."""
+
+    price_document = {
+        "product_id": ObjectId(product_id),
+        "retailer_id": ObjectId(retailer_id),
+        "country_id": ObjectId(region_id),
+        "price": price,
+        "time_checked": datetime.now(UTC)
+    }
+
+    prices_collection = db.db["prices"]
+    prices_collection.insert_one(price_document)
+
 
 def main():
     load_dotenv()
@@ -29,7 +48,7 @@ def main():
         else:
             print(f"Unknown retailer: {product}")
 
-        print(f"{product_id} {price}") # store in db
+        store_price(db, product_id, country_id, retailer_id, price)
 
 
 if __name__ == "__main__":
