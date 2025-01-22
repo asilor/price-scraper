@@ -4,8 +4,8 @@ from dotenv import load_dotenv
 from bson.objectid import ObjectId
 from db import Database, iterate_collection
 from proxies import ProxyRotator, get_proxies
-from amazon import get_amazon_price
-from tradeinn import get_tradeinn_price
+from retailers.amazon import get_amazon_price
+from retailers.tradeinn import get_tradeinn_price
 
 
 AMAZON_ID = "678fe61421cc010007e27780"
