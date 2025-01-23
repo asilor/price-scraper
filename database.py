@@ -35,3 +35,16 @@ def iterate_collection(db: Database, collection_name: str):
             yield document
     finally:
         cursor.close()
+
+
+def create_prices_timeseries_collection(db: Database) -> None:
+    """Create a timeseries collection for prices."""
+    
+    db.create_collection(
+        "prices",
+        timeseries={
+            "timeField": "timestamp",
+            "metaField": "metadata",
+            "granularity": "minutes"
+        }
+    )

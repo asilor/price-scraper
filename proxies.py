@@ -16,7 +16,7 @@ class ProxyRotator:
         del self.sessions[self.current_index]
 
     def get_content(self, url: str) -> str:
-        """Get the content of the given URL through a proxy."""
+        """Gets the content of the given URL through a proxy."""
 
         while self.proxies:
             self._rotate_proxy()
@@ -35,7 +35,7 @@ class ProxyRotator:
     
 
 def get_proxies() -> list[str]:
-    """Return the list of proxies."""
+    """Returns a list of proxies."""
 
     proxies = []
 

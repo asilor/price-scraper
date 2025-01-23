@@ -2,6 +2,9 @@ from proxies import ProxyRotator
 from selectolax.parser import HTMLParser
 
 
+AMAZON_ID = "678fe61421cc010007e27780"
+
+
 def get_amazon_price(proxy_rotator: ProxyRotator, country_id: str, url: str):
     # html = get_amazon_html(proxy_rotator, url)
     # price = parse_amazon_product(html)
