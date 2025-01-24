@@ -5,9 +5,9 @@ import json
 TRADEINN_ID = "67900fe721cc010007e27784"
 
 
-def get_tradeinn_price(proxy_rotator: ProxyRotator, country_id: str, url: str):
+def get_tradeinn_price(proxy_rotator: ProxyRotator, region_id: str, url: str):
     id_modelo = url.split("/")[-2]
-    id_pais = get_tradeinn_id_pais(country_id)
+    id_pais = get_tradeinn_id_pais(region_id)
     url_elastic_dc = f"https://dc.tradeinn.com/{id_modelo}"
 
     headers = {
@@ -33,13 +33,13 @@ def get_tradeinn_price(proxy_rotator: ProxyRotator, country_id: str, url: str):
     return price
 
 
-def get_tradeinn_id_pais(country_id: str) -> int:
+def get_tradeinn_id_pais(region_id: str) -> int:
     """Returns the Tradeinn ID for the given country ID."""
 
-    country_id_to_id_pais = {
+    region_id_to_id_pais = {
         "678fe4be21cc010007e2777e": 180,
         "67939fcb21cc010007e27790": 70,
         "6793a19121cc010007e27792": 75,
     }
     
-    return country_id_to_id_pais.get(country_id, 180)
+    return region_id_to_id_pais.get(region_id, 180)
