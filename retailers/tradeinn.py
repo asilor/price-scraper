@@ -28,6 +28,8 @@ def get_tradeinn_price(proxy_rotator: ProxyRotator, country_id: str, url: str):
         if price is not None:
             break
 
+    print(f"url: {url}, country: {id_pais}, price: {price}")
+
     return price
 
 
