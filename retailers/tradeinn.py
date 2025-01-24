@@ -1,14 +1,12 @@
+from database import Database, store_price
 from proxies import ProxyRotator
-from database import store_price
 import json
 
 
 TRADEINN_ID = "67900fe721cc010007e27784"
 
 
-def get_tradeinn_price(db, proxy_rotator: ProxyRotator, product: dict) -> None:
-    product_id = str(product["product_id"])
-    retailer_id = str(product["retailer_id"])
+def get_tradeinn_price(db: Database, proxy_rotator: ProxyRotator, product: dict) -> None:
     region_id = str(product["region_id"])
     url = product["url"]
 
@@ -23,10 +21,10 @@ def get_tradeinn_price(db, proxy_rotator: ProxyRotator, product: dict) -> None:
     response = proxy_rotator.get_content(url_elastic_dc, headers=headers)
     product_json = json.loads(response)
     
-    product = product_json["_source"]["productes"][0]
+    product_tradeinn = product_json["_source"]["productes"][0]
 
     price = None
-    for seller in product["sellers"]:
+    for seller in product_tradeinn["sellers"]:
         for precio_pais in seller["precios_paises"]:
             if precio_pais["id_pais"] == id_pais:
                 price = precio_pais["precio"]
@@ -34,9 +32,9 @@ def get_tradeinn_price(db, proxy_rotator: ProxyRotator, product: dict) -> None:
         if price is not None:
             break
 
-    print(f"url: {url}, country: {id_pais}, price: {price}")
+    store_price(db, product, price)
 
-    store_price(db, product_id, retailer_id, region_id, price)
+    print(f"url: {url}, region_id: {region_id}, price: {price}")
 
 
 def get_tradeinn_id_pais(region_id: str) -> int:
