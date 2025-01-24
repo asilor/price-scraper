@@ -1,5 +1,7 @@
 from pymongo import MongoClient
 from pymongo.database import Database
+from bson.objectid import ObjectId
+from datetime import datetime, UTC
 import os
 
 
@@ -37,14 +39,22 @@ def iterate_collection(db: Database, collection_name: str):
         cursor.close()
 
 
-def create_prices_timeseries_collection(db: Database) -> None:
-    """Create a timeseries collection for prices."""
-    
-    db.create_collection(
-        "prices",
-        timeseries={
-            "timeField": "timestamp",
-            "metaField": "metadata",
-            "granularity": "minutes"
-        }
-    )
+def store_price(db: Database, product: dict, price: float) -> None:
+    """Stores the given price in the database."""
+
+    product_id = str(product["product_id"])
+    retailer_id = str(product["retailer_id"])
+    region_id = str(product["region_id"])
+
+    price_document = {
+        "metadata": {
+            "product_id": ObjectId(product_id),
+            "retailer_id": ObjectId(retailer_id),
+            "region_id": ObjectId(region_id)
+        },
+        "timestamp": datetime.now(UTC),
+        "price": price
+    }
+
+    prices_collection = db["prices"]
+    prices_collection.insert_one(price_document)
