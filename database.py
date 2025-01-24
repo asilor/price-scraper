@@ -44,8 +44,8 @@ def store_price(db: Database, product: dict, price: float) -> None:
     price_document = {
         "metadata": {
             "product_id": product["product_id"],
-            "retailer_id": product["product_id"],
-            "region_id": product["product_id"]
+            "retailer_id": product["retailer_id"],
+            "region_id": product["region_id"]
         },
         "timestamp": datetime.now(UTC),
         "price": price
@@ -53,6 +53,3 @@ def store_price(db: Database, product: dict, price: float) -> None:
 
     prices_collection = db["prices"]
     prices_collection.insert_one(price_document)
-
-
-
