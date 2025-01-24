@@ -1,4 +1,5 @@
 from database import Database, store_price
+from bson.objectid import ObjectId
 from proxies import ProxyRotator
 import json
 
@@ -7,11 +8,9 @@ TRADEINN_ID = "67900fe721cc010007e27784"
 
 
 def get_tradeinn_price(db: Database, proxy_rotator: ProxyRotator, product: dict) -> None:
-    region_id = str(product["region_id"])
     url = product["url"]
-
     id_modelo = url.split("/")[-2]
-    id_pais = get_tradeinn_id_pais(region_id)
+
     url_elastic_dc = f"https://dc.tradeinn.com/{id_modelo}"
 
     headers = {
@@ -21,29 +20,28 @@ def get_tradeinn_price(db: Database, proxy_rotator: ProxyRotator, product: dict)
     response = proxy_rotator.get_content(url_elastic_dc, headers=headers)
     product_json = json.loads(response)
     
-    product_tradeinn = product_json["_source"]["productes"][0]
-
-    price = None
-    for seller in product_tradeinn["sellers"]:
-        for precio_pais in seller["precios_paises"]:
-            if precio_pais["id_pais"] == id_pais:
-                price = precio_pais["precio"]
-                break
-        if price is not None:
-            break
-
-    store_price(db, product, price)
-
-    print(f"url: {url}, region_id: {region_id}, price: {price}")
-
-
-def get_tradeinn_id_pais(region_id: str) -> int:
-    """Returns the Tradeinn ID for the given country ID."""
-
-    region_id_to_id_pais = {
-        "678fe4be21cc010007e2777e": 180,
-        "67939fcb21cc010007e27790": 70,
-        "6793a19121cc010007e27792": 75,
-    }
+    precio_paises = product_json["_source"]["productes"][0]["sellers"][0]["precios_paises"]
     
-    return region_id_to_id_pais.get(region_id, 180)
+    for precio_pais in precio_paises:
+        region_id = get_region_id(precio_pais["id_pais"])
+        if region_id:
+            price = precio_pais["precio"]
+
+            product["region_id"] = ObjectId(region_id)
+
+            store_price(db, product, price)
+            print(f"url: {url}, region_id: {region_id}, price: {price}")
+
+
+def get_region_id(id_pais: str) -> int:
+    """Returns the region_id given the id_pais."""
+
+    id_pais_to_region_id = {
+        180: "678fe4be21cc010007e2777e",
+        70: "67939fcb21cc010007e27790",
+        75: "6793a19121cc010007e27792",
+    }
+
+    region_id = id_pais_to_region_id.get(id_pais, None)
+    
+    return region_id
