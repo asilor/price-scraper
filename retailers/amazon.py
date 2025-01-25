@@ -14,10 +14,13 @@ def get_amazon_price(db: Database, proxy_rotator: ProxyRotator, product: dict) -
     html = get_amazon_html(proxy_rotator, url)
     price = parse_amazon_price(html)
 
+    region_id = get_region_id(url)
+
+    product["region_id"] = ObjectId(region_id)
     product["retailer_id"] = ObjectId(AMAZON_ID)
 
     store_price(db, product, price)
-    print(f"url: {url}, price: {price}")
+    print(f"url: {url}, region_id: {region_id}, price: {price}")
 
 
 def get_amazon_html(proxy_rotator: ProxyRotator, url: str) -> str:
@@ -46,3 +49,19 @@ def parse_amazon_price(html: str) -> float:
     price = f"{price_whole}.{price_fraction}"
 
     return float(price)
+
+
+def get_region_id(url: str) -> str:
+    """Returns the region_id given the url."""
+
+    domain_to_region_id = {
+        "amazon.es": "67942b3721cc010007e278df",
+        "amazon.it": "679404a321cc010007e2784d",
+        "amazon.fr": "6794031521cc010007e2780f",
+    }
+
+    for domain, region_id in domain_to_region_id.items():
+        if domain in url:
+            return region_id
+
+    return None
