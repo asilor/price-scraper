@@ -15,7 +15,7 @@ class ProxyRotator:
         del self.proxies[self.current_index]
         del self.sessions[self.current_index]
 
-    def get_content(self, url: str, headers: dict = None) -> str:
+    def get_content(self, url: str, headers: dict = None, cookies: dict = None) -> str:
         """Gets the content of the given URL through a proxy."""
 
         while self.proxies:
@@ -23,7 +23,7 @@ class ProxyRotator:
             proxy = self.proxies[self.current_index]
             session = self.sessions[self.current_index]
             try:
-                response = session.get(url, impersonate="safari", proxy=proxy, timeout=3000, headers=headers)
+                response = session.get(url, impersonate="safari", proxy=proxy, timeout=3000, headers=headers, cookies=cookies)
                 if response.status_code == 200:
                     return response.text
                 else:
