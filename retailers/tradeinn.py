@@ -7,7 +7,11 @@ import json
 TRADEINN_ID = "67900fe721cc010007e27784"
 
 
-def get_tradeinn_price(db: Database, proxy_rotator: ProxyRotator, product: dict) -> None:
+def get_tradeinn_prices(db: Database, proxy_rotator: ProxyRotator, product: dict) -> None:
+    """Gets the prices of the given product in all available languages and stores it in the database."""
+
+    product["retailer_id"] = ObjectId(TRADEINN_ID)
+    
     url = product["url"]
     id_modelo = url.split("/")[-2]
 
@@ -182,6 +186,7 @@ def get_region_id(id_pais: str) -> int:
         164: "6794225421cc010007e278bf",
         165: "6794225a21cc010007e278c1",
         167: "6794226221cc010007e278c3",
+        175: "67942b1c21cc010007e278d7",
         180: "67942b3721cc010007e278df",
         192: "67942b6121cc010007e278eb",
         209: "67942fa921cc010007e2790b",
