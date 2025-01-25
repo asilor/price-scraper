@@ -10,22 +10,8 @@ AMAZON_ID = "678fe61421cc010007e27780"
 def get_amazon_price(db: Database, proxy_rotator: ProxyRotator, product: dict) -> None:
     """Gets the price of the given product and stores it in the database."""
 
-    """
-    There are 3 necessary cookies to preserve the country throught requests 
-    (even if the ip changes to another country in subsequent requests):
-    sesion-id, session-id-time, ubid-acbde
-    """
-
-    cookies = {
-        "i18n-prefs": "",
-        "session-id": "",
-        "session-id-time": "",
-        "session-token": "",
-        "ubid-acbde": ""
-    }
-
     url = str(product["url"])
-    html = proxy_rotator.get_content(url, cookies=cookies)
+    html = proxy_rotator.get_content(url)
 
     with open("index.html", "w") as f:
         f.write(html)
@@ -37,7 +23,7 @@ def get_amazon_price(db: Database, proxy_rotator: ProxyRotator, product: dict) -
     product["region_id"] = ObjectId(region_id)
     product["retailer_id"] = ObjectId(AMAZON_ID)
 
-    #store_price(db, product, price)
+    store_price(db, product, price)
     print(f"url: {url}, region_id: {region_id}, price: {price}")
 
 
