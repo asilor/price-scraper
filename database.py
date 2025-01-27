@@ -43,7 +43,7 @@ def store_price(db: Database, product: dict, price: float) -> None:
 
     price_document = {
         "metadata": {
-            "product_id": product["product_id"],
+            "variant_id": product["variant_id"],
             "retailer_id": product["retailer_id"],
             "region_id": product["region_id"]
         },
