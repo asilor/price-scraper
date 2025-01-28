@@ -13,12 +13,14 @@ def get_amazon_price(db: Database, proxy_rotator: ProxyRotator, product: dict) -
     url = str(product["url"])
     html = proxy_rotator.get_content(url)
 
-    with open("index.html", "w") as f:
-        f.write(html)
-
     price = parse_amazon_price(html)
 
     region_id = get_region_id(url)
+    if region_id is None:
+        print(f"Unknown region: {url}")
+        return
+    else:
+        print(region_id)
  
     product["region_id"] = ObjectId(region_id)
     product["retailer_id"] = ObjectId(AMAZON_ID)
@@ -32,10 +34,10 @@ def get_amazon_html(proxy_rotator: ProxyRotator, url: str) -> str:
     
     while True:
         html = proxy_rotator.get_content(url)
-        if "Enter the characters you see below" not in html:
-            return html
-        else:
+        if "To discuss automated access to Amazon data" in html:
             print(f"{url} CAPTCHA")
+        else:
+            return html
 
 
 def parse_amazon_price(html: str) -> float:
@@ -45,6 +47,9 @@ def parse_amazon_price(html: str) -> float:
 
     price_whole_element = tree.css_first("span.a-price-whole")
     price_fraction_element = tree.css_first("span.a-price-fraction")
+
+    if not price_whole_element or not price_fraction_element:
+        return 0.0
 
     price_whole = price_whole_element.text().replace(".", "").replace(",", "")
     price_fraction = price_fraction_element.text()
