@@ -4,12 +4,14 @@ from database import get_database, iterate_collection
 from proxies import ProxyRotator, get_proxies
 from retailers.amazon import get_amazon_price
 from retailers.tradeinn import get_tradeinn_prices
+from retailers.pccomponentes import get_pccomponentes_prices
 
 
 def process_product(db, proxy_rotator, product) -> None:
     url = str(product["url"])
-    if "tradeinn" in url: get_tradeinn_prices(db, proxy_rotator, product)
-    elif "amazon" in url: get_amazon_price(db, proxy_rotator, product)
+    if "amazon" in url: get_amazon_price(db, proxy_rotator, product)
+    elif "tradeinn" in url: get_tradeinn_prices(db, proxy_rotator, product)
+    elif "pccomponentes" in url: get_pccomponentes_prices(db, proxy_rotator, product)
     else: print(f"Unknown retailer: {url}")
 
 
